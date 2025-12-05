@@ -29,15 +29,15 @@ func order(i int) int {
 }
 func isInvalid(i int) bool {
 	ord := order(i)
-	if ord % 2 != 0 {
+	if ord%2 != 0 {
 		return false
 	}
-	pow := 1;
-	for j := 0; j < ord / 2; j++ {
+	pow := 1
+	for j := 0; j < ord/2; j++ {
 		pow *= 10
 	}
 	first := i / pow
-	sec := i - first * pow
+	sec := i - first*pow
 	return first == sec
 }
 
@@ -51,15 +51,53 @@ func part1(lines []string) int {
 		to, _ := strconv.Atoi(tokens[1])
 		for i := from; i <= to; i++ {
 			if isInvalid(i) {
-				res+=i
+				res += i
 			}
 		}
 	}
 	return res
 }
 
+func isInvalid2(i int) bool {
+	ord := order(i)
+
+	outer:
+	for sz := 1; sz <= ord / 2; sz++ {
+		num := i
+		if ord%sz != 0 {
+			continue
+		}
+		pow := 1
+		for j := 0; j < sz; j++ {
+			pow *= 10
+		}
+		first := num % pow
+		num /= pow
+		for ; num != 0; num /= pow {
+			if num % pow != first {
+				continue outer
+			}
+		}
+		return true
+	}
+	return false
+}
+
 func part2(lines []string) int {
-	return 0
+	res := 0
+	parts := strings.Split(lines[0], ",")
+
+	for _, part := range parts {
+		tokens := strings.Split(part, "-")
+		from, _ := strconv.Atoi(tokens[0])
+		to, _ := strconv.Atoi(tokens[1])
+		for i := from; i <= to; i++ {
+			if isInvalid2(i) {
+				res += i
+			}
+		}
+	}
+	return res
 }
 
 func mustReadLines(path string) []string {
