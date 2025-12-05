@@ -36,13 +36,23 @@ func part1(lines []string) int {
 		f, p := maxDigit(line, 0, len(line) - 2)
 		s, _ := maxDigit(line, p+1, len(line) - 1)
 		result += f*10+s
-		fmt.Println(line, result, f, s, p)
 	}
 	return result
 }
 
 func part2(lines []string) int {
-	return 0
+	result := 0
+	for _, line := range(lines) {
+		res := 0
+		p := 0
+		for n := 12; n > 0; n-- {
+			s, p2 := maxDigit(line, p, len(line) - n)
+			res = res * 10 + s
+			p = p2 + 1
+		}
+		result += res
+	}
+	return result
 }
 
 func mustReadLines(path string) []string {
