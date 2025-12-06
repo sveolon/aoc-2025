@@ -53,6 +53,14 @@ func part1(lines []string) int {
 	return res
 }
 
+func debugAddOne(x int, where string) int {
+    y := x + 1
+    if (y < x) != (x < 0) {
+        fmt.Printf("!!! OVERFLOW at %s: %d + 1 wrapped around\n", where, x)
+    }
+    return y
+}
+
 type Interval struct {
     Start int
     End   int
@@ -76,14 +84,12 @@ func (s *IntervalSet) Add(start, end int) {
 
     i := s.find(start)
 
-    // Check if interval just before i overlaps
     if i > 0 && s.items[i-1].End+1 >= start {
         i--
     }
 
     newStart, newEnd := start, end
 
-    // Merge all overlapping or adjacent intervals
     j := i
     for j < len(s.items) && s.items[j].Start <= newEnd+1 {
         if s.items[j].Start < newStart {
@@ -95,10 +101,12 @@ func (s *IntervalSet) Add(start, end int) {
         j++
     }
 
-    // Replace [i:j] with merged interval
-    newSlice := append(s.items[:i], Interval{newStart, newEnd})
-    newSlice = append(newSlice, s.items[j:]...)
-    s.items = newSlice
+    // IMPORTANT: use a fresh slice so we don't overwrite data we still need
+    merged := make([]Interval, 0, len(s.items)-(j-i)+1)
+    merged = append(merged, s.items[:i]...)
+    merged = append(merged, Interval{newStart, newEnd})
+    merged = append(merged, s.items[j:]...)
+    s.items = merged
 }
 
 func (s *IntervalSet) Contains(x int) bool {
@@ -118,6 +126,7 @@ func (s *IntervalSet) All() []Interval {
     return s.items
 }
 
+// 318561521520057 is too low
 func part2(lines []string) int {
 	var ranges IntervalSet
 	for _, s := range lines {
