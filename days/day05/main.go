@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sort"
 )
 
 func main() {
@@ -52,8 +53,88 @@ func part1(lines []string) int {
 	return res
 }
 
+type Interval struct {
+    Start int
+    End   int
+}
+
+type IntervalSet struct {
+    items []Interval // always sorted by Start, and non-overlapping
+}
+
+func (s *IntervalSet) find(pos int) int {
+    // returns index of first interval with Start > pos
+    return sort.Search(len(s.items), func(i int) bool {
+        return s.items[i].Start > pos
+    })
+}
+
+func (s *IntervalSet) Add(start, end int) {
+    if start > end {
+        start, end = end, start
+    }
+
+    i := s.find(start)
+
+    // Check if interval just before i overlaps
+    if i > 0 && s.items[i-1].End+1 >= start {
+        i--
+    }
+
+    newStart, newEnd := start, end
+
+    // Merge all overlapping or adjacent intervals
+    j := i
+    for j < len(s.items) && s.items[j].Start <= newEnd+1 {
+        if s.items[j].Start < newStart {
+            newStart = s.items[j].Start
+        }
+        if s.items[j].End > newEnd {
+            newEnd = s.items[j].End
+        }
+        j++
+    }
+
+    // Replace [i:j] with merged interval
+    newSlice := append(s.items[:i], Interval{newStart, newEnd})
+    newSlice = append(newSlice, s.items[j:]...)
+    s.items = newSlice
+}
+
+func (s *IntervalSet) Contains(x int) bool {
+    i := sort.Search(len(s.items), func(i int) bool {
+        return s.items[i].Start > x
+    })
+
+    if i == 0 {
+        return false
+    }
+
+    iv := s.items[i-1]
+    return x >= iv.Start && x <= iv.End
+}
+
+func (s *IntervalSet) All() []Interval {
+    return s.items
+}
+
 func part2(lines []string) int {
-	return 0
+	var ranges IntervalSet
+	for _, s := range lines {
+		if s == "" {
+			break
+		}
+
+		parts := strings.SplitN(s, "-", 2)
+		from, _ := strconv.Atoi(parts[0])
+		to, _ := strconv.Atoi(parts[1])
+		ranges.Add(from, to)
+	}
+	res := 0
+	for _, r := range ranges.All() {
+		res += (r.End - r.Start + 1)
+	}
+	return res
 }
 
 func mustReadLines(path string) []string {
