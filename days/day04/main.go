@@ -25,7 +25,7 @@ func part1(lines []string) int {
 	C := len(lines[0])
 	for l := 0; l < L; l++ {
 		for c := 0; c < C; c++ {
-			if lines[l][c] != '@' {
+			if lines[l][c] == '.' {
 				continue
 			}
 			count := 0
@@ -34,7 +34,7 @@ func part1(lines []string) int {
 					if l + i < 0 || l + i >= L || c + j < 0 || c + j >= C || (i == 0 && j == 0) {
 						continue
 					}
-					if lines[l+i][c+j] == '@' {
+					if lines[l+i][c+j] != '.' {
 						count++
 					}
 				}
@@ -48,8 +48,51 @@ func part1(lines []string) int {
 }
 
 func part2(lines []string) int {
-	res := 0
-	return res
+	result := 0
+
+	for ;; {
+		res := 0
+		L := len(lines)
+		C := len(lines[0])
+		for l := 0; l < L; l++ {
+			for c := 0; c < C; c++ {
+				if lines[l][c] == '.' {
+					continue
+				}
+				count := 0
+				for i := -1; i <= 1; i++ {
+					for j := -1; j <= 1; j++ {
+						if l + i < 0 || l + i >= L || c + j < 0 || c + j >= C || (i == 0 && j == 0) {
+							continue
+						}
+						if lines[l+i][c+j] != '.' {
+							count++
+						}
+					}
+				}
+				if count < 4 {
+					r := []rune(lines[l])
+					r[c] = 'x'
+					lines[l] = string(r)
+					res++
+				}
+			}
+		}
+		for l := 0; l < L; l++ {
+			for c := 0; c < C; c++ {
+				if lines[l][c] == 'x' {
+					r := []rune(lines[l])
+					r[c] = '.'
+					lines[l] = string(r)
+				}
+			}
+		}
+		if res == 0 {
+			break
+		}
+		result += res
+	}
+	return result
 }
 
 func mustReadLines(path string) []string {

@@ -3,8 +3,8 @@ package main
 import "testing"
 
 const (
-	testPart1Expected = 13 // TODO: replace with known sample answer
-	testPart2Expected = 43 // TODO: replace with known sample answer
+	testPart1Expected = 3 // TODO: replace with known sample answer
+	testPart2Expected = 0 // TODO: replace with known sample answer
 )
 
 func TestSampleInput(t *testing.T) {
