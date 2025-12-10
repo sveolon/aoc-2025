@@ -51,7 +51,40 @@ func part1(lines []string) int {
 }
 
 func part2(lines []string) int {
+	L := len(lines)
+	C := len(lines[0])
+	tmp := 0
 	res := 0
+	isMult := false
+	for c := 0; c < C; c++ {
+		if lines[L-1][c] != ' ' {
+			res += tmp;
+			isMult = (lines[L-1][c] == '*')
+			if isMult {
+				tmp = 1
+			} else {
+				tmp = 0
+			}
+		}
+		num := 0
+		numC := 0
+		for l := 0; l < L-1; l++ {
+			if lines[l][c] != ' ' {
+				numC++
+				num *= 10
+				n := lines[l][c] - '0'
+				num += int(n)
+			}
+		}
+		if numC > 0 {
+			if isMult{
+				tmp *= num
+			} else {
+				tmp += num
+			}
+		}
+	}
+	res += tmp
 	return res
 }
 
