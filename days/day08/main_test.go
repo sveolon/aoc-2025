@@ -10,7 +10,7 @@ const (
 func TestSampleInput(t *testing.T) {
 	lines := mustReadLines("test.txt")
 
-	if got := part1(lines, 10); got != testPart1Expected {
+	if got := part1(lines); got != testPart1Expected {
 		t.Fatalf("part1: got %v, want %v", got, testPart1Expected)
 	}
 	if got := part2(lines); got != testPart2Expected {

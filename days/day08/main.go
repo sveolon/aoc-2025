@@ -15,11 +15,11 @@ func main() {
 
 	lines := mustReadLines(inputPath)
 
-	fmt.Printf("Part 1: %v\n", part1(lines, 1000))
+	fmt.Printf("Part 1: %v\n", part1(lines))
 	fmt.Printf("Part 2: %v\n", part2(lines))
 }
 
-func part1(lines []string, toConnect int) int {
+func part1(lines []string) int {
 	res := 0
 	return res
 }
