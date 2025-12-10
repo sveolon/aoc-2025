@@ -53,7 +53,37 @@ func part1(lines []string) int {
 }
 
 func part2(lines []string) int {
+	L := len(lines)
+	C := len(lines[0])
+	cur := make([]int, C)
+	for c := 0; c < C; c++ {
+		if lines[0][c] == 'S' {
+			cur[c] = 1
+		}
+	}
+	for l := 1; l < L; l++ {
+		newCur := make([]int, C)
+		for c := 0; c < C; c++ {
+			if cur[c] > 0 {
+				switch lines[l][c] {
+				case '.':
+						newCur[c] += cur[c]
+					case '^':
+						if c > 0 {
+							newCur[c-1] += cur[c]
+						}
+						if c < C-1 {
+							newCur[c+1] += cur[c]
+						}
+				} 
+			}
+		}
+		cur = newCur
+	}
 	res := 0
+	for c := 0; c < C; c++ {
+		res += cur[c]
+	}
 	return res
 }
 
