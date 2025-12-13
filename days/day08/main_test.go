@@ -4,7 +4,7 @@ import "testing"
 
 const (
 	testPart1Expected = 40 // TODO: replace with known sample answer
-	testPart2Expected = 0 // TODO: replace with known sample answer
+	testPart2Expected = 25272 // TODO: replace with known sample answer
 )
 
 func TestSampleInput(t *testing.T) {

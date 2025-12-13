@@ -168,14 +168,11 @@ func part1(lines []string, connections int) int {
 			c++
 
 			ds.Union(conn.p1, conn.p2)
-	//		fmt.Printf("Joining %v and %v, new root %d, new size %d\n", conn.p1, conn.p2, ds.Find(conn.p1), ds.SizeOf(conn.p1))
 		}
 	}
 
-	fmt.Println(ds)
 	res := 1
 	roots, sizes := ds.ThreeLargestComponents()
-	fmt.Println(roots, sizes)
 	for i := 0; i < 3; i++ {
 		if roots[i] == -1 {
 			continue
@@ -187,8 +184,35 @@ func part1(lines []string, connections int) int {
 }
 
 func part2(lines []string) int {
-	res := 0
-	return res
+	N := len(lines)
+	dists := make([]Dist, 0, N*N/2)
+	for i := 0; i < N; i++ {
+		a1, b1, c1, _ := parse3(lines[i])
+		for j := i + 1; j < N; j++ {
+			a2, b2, c2, _ := parse3(lines[j])
+			dist := (a1-a2)*(a1-a2) + (b1-b2)*(b1-b2) + (c1-c2)*(c1-c2)
+			dists = append(dists, Dist{dist, i, j})
+		}
+	}
+	sort.Slice(dists, func(i, j int) bool {
+		return dists[i].dist < dists[j].dist 
+	})
+
+	ds := NewDisjointSet(N)
+	n := N-1
+	for i := 0; ; i++ {
+		conn := dists[i]
+		if !ds.SameSet(conn.p1, conn.p2) {
+			if n == 1 {
+				x1, _, _, _ := parse3(lines[conn.p1])
+				x2, _, _, _ := parse3(lines[conn.p2])
+				return x1 * x2
+			}
+			n--
+			ds.Union(conn.p1, conn.p2)
+		}
+	}
+	return 0
 }
 
 func mustReadLines(path string) []string {
